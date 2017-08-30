@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require ('body-parser');
 const cors = require('cors');
 var favicon = require('serve-favicon')
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(favicon(path.join(__dirname, 'public', 'video.ico')))
 let app = express();
 
 
