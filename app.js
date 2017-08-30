@@ -3,6 +3,8 @@
 const express = require('express');
 const bodyParser = require ('body-parser');
 const cors = require('cors');
+var favicon = require('serve-favicon')
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 let app = express();
 
 
