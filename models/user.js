@@ -16,8 +16,12 @@ var UserSchema = Schema({
   },
   password:String,
   role: String,
-  image:String,
+  image:{
+  type:String,
+  default:"//placehold.it/150" 
+  },
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
+  myvideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
 })
 
 UserSchema.methods.favorite = function(id){
@@ -30,6 +34,10 @@ UserSchema.methods.favorite = function(id){
 
 UserSchema.methods.unfavorite = function(id){
   this.favorites.remove(id);
+  return this.save();
+};
+UserSchema.methods.myVideoss = function(id){
+  this.myvideos.push(id);
   return this.save();
 };
 

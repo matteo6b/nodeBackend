@@ -10,6 +10,7 @@ exports.createToken = function(user){
             surname: user.surname,
             email: user.email,
             role: user.role,
+            favorites:user.favorites,
             image: user.image,
             iat:moment.unix(),
             exp:moment().add(30,'days').unix

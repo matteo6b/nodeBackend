@@ -41,39 +41,6 @@ exports.saveUser = (req,res) => {
       })
     }
     };
-exports.saveMusic = (req,res) => {
-      console.log(req.body)
-        if(!req.body.email || !req.body.password || !req.body.name || !req.body.surname ) {
-          res.status(400).json({ success: false, message: 'Please enter data correctly .' });
-        } else {
-          const newUser = new User({
-            email: req.body.email,
-            password: req.body.password,
-            role:'ROLE_MUSIC',
-            image:null,
-            name:req.body.name,
-            surname:req.body.surname
-          });
-
-          bcrypt.hash(req.body.password,null,null,function(err,hash){
-            newUser.password = hash;
-
-            newUser.save((err,userStored) => {
-              if(err){
-                  res.status(500).send({message:'error al guardar el usuario'});
-              }else{
-                if(!userStored){
-                  res.status(404).send({message:"no se ha registrado el usuario"});
-                }
-                else{
-                  res.status(200).send({user:userStored});
-                }
-              }
-            });
-          })
-
-        }
-      };
   exports.login =  (req,res) => {
         let params = req.body;
           let email = params.email;
@@ -184,3 +151,15 @@ exports.getImage = (req,res) =>{
       } )
 
 }
+exports.findOne = (req,res) =>{
+  User.findOne({
+  _id: req.user.sub
+}).populate('favorites').populate('myvideos')
+  .exec().then((video) =>{
+      res.json(video)
+
+  }).catch((err) => {
+       res.send('error occured');
+     });
+
+};

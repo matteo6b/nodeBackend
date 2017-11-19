@@ -71,10 +71,20 @@ exports.addVideo = (req,res) => {
            description: req.body.description,
            video_src:filename,
            user:req.user.sub
-         });
+         });  User.findById(req.user.sub).then(function(user){
+             if (!user) { return res.sendStatus(401); }
+
+
+
          video.save()
-           .then(savedVideo => res.json(savedVideo))
+           .then(savedVideo =>  user.myVideoss(savedVideo._id).then(function(video){
+             res.json({video:video})
+
+           })
+             )
            .catch(e => next(e));
+           })
+
         }
         else{
           fs.unlink(file_path, (err) => {

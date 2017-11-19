@@ -19,6 +19,7 @@ const VideoSchema = new mongoose.Schema({
         type: Number,
          default: 0
       },
+      
       created_at: Date,
       user : { type: Schema.Types.ObjectId, ref: 'User' }
 
@@ -39,7 +40,7 @@ VideoSchema.pre('save', function(next) {
 VideoSchema.methods.updateFavoriteCount = function() {
     let  video= this;
   return User.count({favorites: {$in: [video._id]}}).then(function(count){
-  video.favoritesCount = count;
+      video.favoritesCount = count;
 
     return video.save();
   });

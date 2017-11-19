@@ -10,10 +10,9 @@ const multipart = require('connect-multiparty');
 const md_upload = multipart({uploadDir:'./uploads/users'})
 //md_auth.ensureAuth
 api.post('/register',UserController.saveUser);
-api.post('/registermusic',UserController.saveMusic);
 api.post('/login',UserController.login);
 api.put('/update-user/:id',md_auth.ensureAuth,UserController.updateUser);
 api.post('/upload-image-user/:id',[md_auth.ensureAuth,md_upload],UserController.uploadImage);
 api.get('/get-image-file/:imageFile',UserController.getImage);
-
+api.get('/user/',md_auth.ensureAuth,UserController.findOne);
 module.exports = api;
