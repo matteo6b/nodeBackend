@@ -19,10 +19,10 @@ const VideoSchema = new mongoose.Schema({
         type: Number,
          default: 0
       },
-      
-      created_at: Date,
-      user : { type: Schema.Types.ObjectId, ref: 'User' }
 
+      created_at: Date,
+      user : { type: Schema.Types.ObjectId, ref: 'User' },
+      comments:[{ type: Schema.Types.ObjectId, ref: 'Comment' }],
 
 
 })
@@ -44,6 +44,10 @@ VideoSchema.methods.updateFavoriteCount = function() {
 
     return video.save();
   });
+};
+VideoSchema.methods.addComments = function(id){
+  this.comments.push(id);
+  return this.save();
 };
 
 module.exports = mongoose.model('Video', VideoSchema);
