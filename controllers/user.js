@@ -3,8 +3,10 @@
 const bcrypt =require('bcrypt-nodejs');
 const fs = require('fs');
 const path = require('path');
+require ('mongoose-pagination');
 //models
 const User = require('../models/user');
+const Follow = require('../models/follow');
 //services
 const jwt = require('../services/jwt');
 
@@ -151,7 +153,7 @@ exports.getImage = (req,res) =>{
       } )
 
 }
-exports.findOne = (req,res) =>{
+exports.profile= (req,res) =>{
   User.findOne({
   _id: req.user.sub
 }).populate('favorites').populate('myvideos')
@@ -161,5 +163,104 @@ exports.findOne = (req,res) =>{
   }).catch((err) => {
        res.send('error occured');
      });
+
+};
+
+exports.findOne = (req,res) =>{
+  let userId = req.params.id;
+  User.findOne({
+  _id: userId
+}).populate('favorites').populate('myvideos')
+  .exec().then((user) =>{
+    user.password=undefined;
+      followThisUser(req.user.sub,userId).then((value) =>{
+            return res.status(200).send({user,
+              following:value.following,
+              followed:value.followed
+            });
+
+      })
+
+
+
+  }).catch((err) => {
+       res.send('error occured');
+     });
+
+};
+
+async function followThisUser(identityId,userId){
+  const following =  await Follow.findOne({user:identityId,followed:userId}).exec((err,follow) =>{
+    if(err) handleError(err)
+
+    return follow;
+
+  });
+  const followed =  await Follow.findOne({user:userId,followed:identityId}).exec((err,follow) =>{
+    if(err) handleError(err)
+
+    return follow;
+
+  });
+  return {
+    following,
+    followed
+  }
+
+}
+async function folllowUserIds(userId){
+
+  const following = await Follow.find({user:userId}).select({_id:0,__v:0,user:0}).exec((err,follows)=>{
+
+
+  })
+  const followed = await Follow.find({followed:userId}).select({_id:0,__v:0,followed:0}).exec((err,follows)=>{
+        let follows_clean =  [];
+        follows.forEach((follow) =>{
+          follows_clean.push(follow.user);
+        })
+
+  })
+  let following_clean =  [];
+  following.forEach((follow) =>{
+    following_clean.push(follow.followed);
+  })
+
+  let followed_clean =  [];
+  followed.forEach((follow) =>{
+    followed_clean.push(follow.user);
+  })
+
+  return {
+  following:following_clean,
+  followed:followed_clean
+  }
+
+}
+
+exports.getAll = (req,res) =>{
+    let id= req.user.sub;
+      let page =1;
+      if(req.params.page){
+        page = req.params.page;
+      }
+      let itemsPerPage=5;
+      User.find().sort('_id').paginate(page,itemsPerPage, (err,users,total) =>{
+        if(err) return res.status(500).send({message:'Error en la peticion'})
+        if(users.length==0) return res.status(404).send({message:'No hay usuarios disponibles'})
+          folllowUserIds(id).then((value) =>{
+
+            return res.status(200).send({
+                users,
+                total,
+                usersFollowing:value.following,
+                usersFollowme:value.followed,
+                pages:Math.ceil(total/itemsPerPage)
+            })
+
+          })
+
+
+        });
 
 };

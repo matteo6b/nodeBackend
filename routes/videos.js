@@ -13,6 +13,7 @@ const md_upload = multipart({uploadDir:'./uploads/videos'})
 api.post('/video/add',[md_auth.ensureAuth,md_upload],VideoController.addVideo);
 api.get('/:videoFile',VideoController.playVideo);
 api.get('/video/all',md_auth.ensureAuth,VideoController.all);
+api.get('/timeline/:page',md_auth.ensureAuth,VideoController.timeline);
 api.get('/video/favorites',md_auth.ensureAuth,VideoController.allFavorites);
 api.get('/video/:id',md_auth.ensureAuth,VideoController.findOne);
 api.post('/:video/favorite',md_auth.ensureAuth,VideoController.favoriteVideo);

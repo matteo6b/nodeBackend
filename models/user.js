@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+require ('mongoose-pagination');
 var UserSchema = Schema({
   name:{
     type:String,
@@ -18,7 +18,7 @@ var UserSchema = Schema({
   role: String,
   image:{
   type:String,
-  default:"//placehold.it/150" 
+  default:"//placehold.it/150"
   },
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
   myvideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],

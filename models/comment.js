@@ -19,7 +19,7 @@ const CommentSchema = new mongoose.Schema({
 
 
 })
-VideoSchema.pre('save', function(next) {
+CommentSchema.pre('save', function(next) {
   // get the current date
   var currentDate = new Date();
 

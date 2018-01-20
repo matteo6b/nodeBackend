@@ -5,7 +5,7 @@ const path = require('path');
 //models
 const Video = require('../models/video');
 const User = require('../models/user');
-
+const Follow = require('../models/follow');
 exports.playVideo = (req,res) => {
   let videoFile = req.params.videoFile;
   const path = './uploads/videos/'+videoFile;
@@ -71,7 +71,10 @@ exports.addVideo = (req,res) => {
            description: req.body.description,
            video_src:filename,
            user:req.user.sub
-         });  User.findById(req.user.sub).then(function(user){
+         });
+
+
+          User.findById(req.user.sub).then(function(user){
              if (!user) { return res.sendStatus(401); }
 
 
@@ -103,6 +106,7 @@ exports.addVideo = (req,res) => {
 };
 
 exports.favoriteVideo = (req,res,next) => {
+
   let videoId = req.params.video;
 console.log(req.params.video)
   User.findById(req.user.sub).then(function(user){
@@ -137,5 +141,32 @@ exports.unfavoriteVideo = (req,res,next) => {
 
     });
   }).catch(next);
+
+}
+
+exports.timeline = (req,res) =>{
+          let page = 1;
+          if(req.params.page){
+            page = req.params.page;
+          }
+          let itemsPerPage = 4;
+          Follow.find({user:req.user.sub}).populate('followed').exec((err,follows) =>{
+            if(err) return res.status(500).send({message:'Error devolver el seguimiento'});
+              let followsClean =[];
+
+              follows.forEach((follow) =>{
+                followsClean.push(follow.followed)
+              })
+              Video.find({user:{"$in":followsClean}}).sort({'created_at':-1}).populate('user').paginate('user').paginate(page,itemsPerPage,(err,videos,total)=>{
+                  if(err) return res.status(500).send({message:'Error devolver videos'});
+                    return res.status(200).send({
+                      videos,
+                      total,
+                    pages:Math.ceil(total/itemsPerPage)
+                    })
+              })
+
+
+          })
 
 }
