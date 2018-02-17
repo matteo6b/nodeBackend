@@ -36,6 +36,13 @@ UserSchema.methods.unfavorite = function(id){
   this.favorites.remove(id);
   return this.save();
 };
+
+UserSchema.methods.isFavorite = function(id){
+  return this.favorites.some(function(favoriteId){
+    return favoriteId.toString() === id.toString();
+  });
+};
+
 UserSchema.methods.myVideoss = function(id){
   this.myvideos.push(id);
   return this.save();

@@ -21,16 +21,30 @@ exports.playVideo = (req,res) => {
 };
 
 exports.all = (req, res) => {
+let user;
+   User.findById(req.user.sub).then(function(user){
+    if (!user) { return res.sendStatus(401); }
 
   Video.find({}).sort({'created_at':-1})
   .populate('user')
      .exec()
      .then((videos) => {
-       res.json(videos);
+       res.json(videos.map(  function(v){
+
+              let video =  v.toJSON()
+              video.favorited = user.isFavorite(video._id);
+
+          return video;
+        }));
      })
      .catch((err) => {
        res.send('error occured');
      });
+
+ }).catch((err) =>{
+    res.send('error ocurred')
+ });
+
 };
 exports.allFavorites = (req, res) => {
 
@@ -59,7 +73,7 @@ exports.findOne = (req,res) =>{
 
 exports.addVideo = (req,res) => {
 
-      if(req.files){
+      if(req.files.video){
         var file_path = req.files.video.path;
         let file_split = file_path.split('/');
       var  filename = file_split[2];
@@ -101,7 +115,7 @@ exports.addVideo = (req,res) => {
         }
 
       }else{
-        res.status(200).send({message:'no se ha subido video'});
+        res.status(500).send({message:'no uploaded video'});
       }
 };
 

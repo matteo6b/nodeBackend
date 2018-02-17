@@ -248,7 +248,7 @@ exports.getAll = (req,res) =>{
       User.find().sort('_id').paginate(page,itemsPerPage, (err,users,total) =>{
         if(err) return res.status(500).send({message:'Error en la peticion'})
         if(users.length==0) return res.status(404).send({message:'No hay usuarios disponibles'})
-          folllowUserIds(id).then((value) =>{
+          folllowUserIds(id).then((value) => {
 
             return res.status(200).send({
                 users,
