@@ -7,14 +7,12 @@ const User = require('../models/user');
 // Schema defines how the user's data will be stored in MongoDB
 const CommentSchema = new mongoose.Schema({
 
-      title:{
-        type:String,
-      },
-      description:{
+      body:{
         type:String,
       },
       created_at: Date,
-      author : { type: Schema.Types.ObjectId, ref: 'User' }
+      author : { type: Schema.Types.ObjectId, ref: 'User' },
+      video: { type: Schema.Types.ObjectId, ref: 'Video' },
 
 
 

@@ -27,10 +27,10 @@ exports.saveUser = (req,res) => {
 
       bcrypt.hash(req.body.password,null,null,function(err,hash){
         newUser.password = hash;
-
+console.log(newUser)
         newUser.save((err,userStored) => {
           if(err){
-              res.status(500).send({message:'error al guardar el usuario'});
+              res.status(500).send(err);
           }else{
             if(!userStored){
               res.status(404).send({message:"no se ha registrado el usuario"});
@@ -77,10 +77,11 @@ exports.updateUser = (req,res) => {
       let userId = req.params.id;
       let update = req.body;
       delete update.password;
+
       if(userId != req.user.sub ){
         return res.status(500).send({message:'no tienes permisos'})
       }
-      User.findByIdAndUpdate(userId,update, {new:true},(err,userUpdated) =>{
+      User.findByIdAndUpdate(userId,{$set:{name:update.name,surname:update.surname,email:update.email,image:update.image}}, {new:true},(err,userUpdated) =>{
           if(err){
             res.status(500).send({message:"error al actualizar usuario"});
           }else{

@@ -4,9 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 require ('mongoose-pagination');
 var UserSchema = Schema({
-  name:{
-    type:String,
-  },
+  name:String,
   surname:String,
   email:{
     type:String,
