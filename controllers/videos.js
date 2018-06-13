@@ -61,22 +61,18 @@ exports.all = (req, res) => {
           if (err) {
             return res.status(500).send({ message: 'Error devolver videos' });
           }
-          let videosMap = videos.map(function(v) {
-            let video = v.toJSON();
-            video.favorited = user.isFavorite(video._id);
-
-            return video;
-          });
-
+        
+        
           return res.status(200).send({
-            videos: videosMap,
+            videos: videos,
             total,
             pages: Math.ceil(total / itemsPerPage)
           });
         });
     })
     .catch(err => {
-      res.send('error ocurred');
+  
+      res.send(err);
     });
 };
 exports.allFavorites = (req, res) => {
