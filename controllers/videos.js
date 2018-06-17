@@ -46,7 +46,7 @@ exports.all = (req, res) => {
   if (req.params.page) {
     page = req.params.page;
   }
-  let itemsPerPage = 5;
+  let itemsPerPage = 6;
   User.findById(req.user.sub)
     .then(function(user) {
       if (!user) {
@@ -54,6 +54,41 @@ exports.all = (req, res) => {
       }
 
       Video.find({})
+        .sort({ created_at: -1 })
+        .populate('user')
+        .paginate('user')
+        .paginate(page, itemsPerPage, (err, videos, total) => {
+          if (err) {
+            return res.status(500).send({ message: 'Error devolver videos' });
+          }
+        
+        
+          return res.status(200).send({
+            videos: videos,
+            total,
+            pages: Math.ceil(total / itemsPerPage)
+          });
+        });
+    })
+    .catch(err => {
+  
+      res.send(err);
+    });
+};
+
+exports.findTag = (req, res) => {
+  let page = 1;
+  if (req.params.page) {
+    page = req.params.page;
+  }
+  let itemsPerPage = 6;
+  User.findById(req.user.sub)
+    .then(function(user) {
+      if (!user) {
+        return res.sendStatus(401);
+      }
+
+      Video.find({tags:req.params.tag})
         .sort({ created_at: -1 })
         .populate('user')
         .paginate('user')
@@ -151,7 +186,7 @@ async function followThisUser(identityId, userId) {
 exports.addVideo = (req, res) => {
   if (req.files.video) {
     var file_path = req.files.video.path;
-    let file_split = file_path.split('\\');
+    let file_split = file_path.split('/');
     var filename = file_split[2];
     let ext_split = filename.split('.');
     let file_ext = ext_split[1];

@@ -7,7 +7,7 @@ let api = express.Router();
 let md_auth = require('../middlewares/authenticated');
 let md_role = require('../middlewares/isRole');
 const multipart = require('connect-multiparty');
-const md_upload = multipart({ uploadDir: '.\\uploads\\videos' });
+const md_upload = multipart({ uploadDir: './uploads/videos' });
 //md_auth.ensureAuth
 
 api.post(
@@ -17,6 +17,7 @@ api.post(
 );
 api.get('/:videoFile', VideoController.playVideo);
 api.get('/video/all/:page', md_auth.ensureAuth, VideoController.all);
+api.get('/video/findTag/:page/:tag', md_auth.ensureAuth, VideoController.findTag);
 api.get('/timeline/:page', md_auth.ensureAuth, VideoController.timeline);
 api.get(
   '/video/favorites/:page',
